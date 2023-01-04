@@ -1,4 +1,12 @@
 terraform {
+  backend "s3" {
+    region         = "us-east-2"
+    bucket         = "homeops-dev-use2-terraform-backend"
+    key            = "homeops/cloudflare/terraform.tfstate"
+    dynamodb_table = "terraform-lock"
+    role_arn       = "arn:aws:iam::403612620603:role/terraform-backend"
+    encrypt        = true
+  }
 
   required_providers {
     cloudflare = {
@@ -15,6 +23,7 @@ terraform {
     }
   }
 }
+data "aws_caller_identity" "current" {}
 
 data "sops_file" "cloudflare_secrets" {
   source_file = "secret.sops.yaml"
