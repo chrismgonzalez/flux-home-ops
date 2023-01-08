@@ -10,17 +10,29 @@ echo "creating cloud-init image"
 apt update -y
 apt install libguestfs-tools -y
 
-wget {distro_url}
+wget https://cloud-images.ubuntu.com/focal/20230105/focal-server-cloudimg-amd64.img
 
-virt-customize -a {distro} --install qemu-guest-agent
+virt-customize -a focal-server-cloudimg-amd64.img --install qemu-guest-agent
 qm create 9000 --name "ubuntu-2004-cloudinit" --memory 2048 --cores 2 --net0 virtio,bridge=vmbr0
-qm importdisk 9000 {distro} local-lvm
+qm importdisk 9000 focal-server-cloudimg-amd64.img local-lvm
 qm set 9000 --scsihw virtio-scsi-pci --scsi0 local-lvm:vm-9000-disk-0
 qm set 9000 --ide2 local-lvm:cloudinit
 qm set 9000 --boot c --bootdisk scsi0
 qm set 9000 --serial0 socket --vga serial0
 qm set 9000 --agent enabled=1
 qm template 9000
+
+wget https://cloud-images.ubuntu.com/focal/20230105/focal-server-cloudimg-amd64.img
+
+virt-customize -a focal-server-cloudimg-amd64.img --install qemu-guest-agent
+qm create 9001 --name "ubuntu-2004-cloudinit" --memory 2048 --cores 2 --net0 virtio,bridge=vmbr0
+qm importdisk 9001 focal-server-cloudimg-amd64.img local-lvm
+qm set 9001 --scsihw virtio-scsi-pci --scsi0 local-lvm:vm-9001-disk-0
+qm set 9001 --ide2 local-lvm:cloudinit
+qm set 9001 --boot c --bootdisk scsi0
+qm set 9001 --serial0 socket --vga serial0
+qm set 9001 --agent enabled=1
+qm template 9001
 
 
 echo "next up, clone VM, then expand the disk"

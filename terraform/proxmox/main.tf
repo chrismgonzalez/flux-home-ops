@@ -1,3 +1,6 @@
+###################### commands ###########################
+# terraform apply -auto-approve -lock=false -parallelism=2
+###########################################################
 terraform {
   required_providers {
     proxmox = {
@@ -79,7 +82,7 @@ locals {
 }
 
 variable "template_name" {
-  default = "fedora-37-cloudinit"
+  default = "ubuntu-2004-cloudinit"
 }
 resource "proxmox_vm_qemu" "k3s-masters" {
   provider = proxmox.echo
@@ -173,4 +176,8 @@ resource "proxmox_vm_qemu" "k3s-workers" {
       network,
     ]
   }
+
+  depends_on = [
+    proxmox_vm_qemu.k3s-masters
+  ]
 }
