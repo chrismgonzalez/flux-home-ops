@@ -84,7 +84,7 @@ locals {
 variable "template_name" {
   default = "ubuntu-2004-cloudinit"
 }
-resource "proxmox_vm_qemu" "k3s-masters" {
+resource "proxmox_vm_qemu" "k8s-nodes" {
   provider = proxmox.echo
 
   for_each = local.echo
@@ -132,52 +132,52 @@ resource "proxmox_vm_qemu" "k3s-masters" {
   }
 }
 
-resource "proxmox_vm_qemu" "k3s-workers" {
-  for_each = local.jocko
+# resource "proxmox_vm_qemu" "k3s-workers" {
+#   for_each = local.jocko
 
-  provider    = proxmox.jocko
-  name        = "k3s-${each.key}"
-  target_node = "jocko"
+#   provider    = proxmox.jocko
+#   name        = "k3s-${each.key}"
+#   target_node = "jocko"
 
-  full_clone = true
-  clone      = var.template_name
-  vmid       = each.value.vmid
+#   full_clone = true
+#   clone      = var.template_name
+#   vmid       = each.value.vmid
 
-  agent    = 1
-  os_type  = "cloud-init"
-  cores    = 2
-  sockets  = 1
-  cpu      = "host"
-  memory   = 4096
-  scsihw   = "virtio-scsi-pci"
-  bootdisk = "scsi0"
+#   agent    = 1
+#   os_type  = "cloud-init"
+#   cores    = 2
+#   sockets  = 1
+#   cpu      = "host"
+#   memory   = 4096
+#   scsihw   = "virtio-scsi-pci"
+#   bootdisk = "scsi0"
 
-  ciuser     = "serveradmin"
-  cipassword = "serveradmin"
-  ipconfig0  = "ip=${each.value.ip_address}/24,gw=10.10.10.1"
+#   ciuser     = "serveradmin"
+#   cipassword = "serveradmin"
+#   ipconfig0  = "ip=${each.value.ip_address}/24,gw=10.10.10.1"
 
-  sshkeys = data.sops_file.proxmox_secrets.data["ssh_key"]
+#   sshkeys = data.sops_file.proxmox_secrets.data["ssh_key"]
 
-  disk {
-    slot     = 0
-    size     = "20G"
-    type     = "scsi"
-    storage  = "local-lvm"
-    iothread = 1
-  }
+#   disk {
+#     slot     = 0
+#     size     = "20G"
+#     type     = "scsi"
+#     storage  = "local-lvm"
+#     iothread = 1
+#   }
 
-  network {
-    model  = "virtio"
-    bridge = "vmbr0"
-  }
+#   network {
+#     model  = "virtio"
+#     bridge = "vmbr0"
+#   }
 
-  lifecycle {
-    ignore_changes = [
-      network,
-    ]
-  }
+#   lifecycle {
+#     ignore_changes = [
+#       network,
+#     ]
+#   }
 
-  depends_on = [
-    proxmox_vm_qemu.k3s-masters
-  ]
-}
+#   depends_on = [
+#     proxmox_vm_qemu.k3s-masters
+#   ]
+# }

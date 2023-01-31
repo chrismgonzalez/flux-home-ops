@@ -32,4 +32,6 @@ ubuntu:
     - nvme-cli
     - socat
     - python3-kubernetes
+    - python3-pip
+    - python3-openshift
     - python3-yaml
