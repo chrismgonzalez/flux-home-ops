@@ -5,12 +5,10 @@ metadata:
   name: home-kubernetes
   namespace: flux-system
 spec:
-  interval: 10m
+  interval: 30m
   ref:
     branch: main
   url: "https://github.com/chrismgonzalez/flux-home-ops"
-  secretRef:
-    name: github-deploy-key
   ignore: |
     # exclude all
     /*
